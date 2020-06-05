@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Store.Application.AutoMapper;
+using Store.Web.Configuration;
+using System.Globalization;
 
 namespace Store.Web
 {
@@ -11,6 +14,7 @@ namespace Store.Web
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            ConfigureMap.Configure();
         }
 
         public IConfiguration Configuration { get; }
@@ -19,6 +23,10 @@ namespace Store.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            DIContainerSetup.AddDIContainerSetup(services);
+            DatabaseSetup.AddDatabaseSetup(services, Configuration);
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-BR");
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("pt-BR");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

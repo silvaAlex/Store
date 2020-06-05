@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Store.Domain.Entities;
 
-namespace Store.Domain.Interfaces
+namespace Store.Domain.Interfaces.Repositories
 {
-    public interface IPaymentRepository : IRepository<Payment>
+    public interface IPaymentRepository : IBaseRepository<Payment>
     {
         IEnumerable<Payment> GetAllActive();
     }

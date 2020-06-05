@@ -1,9 +1,9 @@
 ﻿using Store.Domain.Entities;
 using System.Collections.Generic;
 
-namespace Store.Domain.Interfaces
+namespace Store.Domain.Interfaces.Services
 {
-    public interface IProductRepository : IRepository<Product>
+    public interface IProductService : IBaseService<Product>
     {
         IEnumerable<Product> GetAllActives();
         IEnumerable<Product> GetActiveByCategory(int categoryId);

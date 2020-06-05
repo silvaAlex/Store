@@ -10,11 +10,8 @@ namespace Store.Infra.Data.Context
         DbSet<Product> Products { get; set; }
         DbSet<Payment> Payments { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-                optionsBuilder.UseSqlite("Data Source=local.db");
-        }
+        public StoreContext(DbContextOptions<StoreContext> options) : base(options) { }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,9 +19,9 @@ namespace Store.Infra.Data.Context
 
             modelBuilder.HasDefaultSchema("ControleStore");
 
-            modelBuilder.Entity<Category>(new CategoryMap().Configure);
-            modelBuilder.Entity<Product>(new ProductMap().Configure);
-            modelBuilder.Entity<Payment>(new PaymentMap().Configure);
+            modelBuilder.ApplyConfiguration(new CategoryMap());
+            modelBuilder.ApplyConfiguration(new ProductMap());
+            modelBuilder.ApplyConfiguration(new PaymentMap());
         }
     }
 }
