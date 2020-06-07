@@ -1,56 +1,67 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Store.Domain.Interfaces.Repositories;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+using Store.Domain.Interfaces;
+using Store.Infra.Cross.DTO.Interfaces;
 using Store.Infra.Data.Context;
 using System;
 using System.Linq;
 
 namespace Store.Infra.Data.Repository
 {
-    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
+    public class BaseRepository<TEntity, TEntityDTO> : IBaseRepository<TEntity, TEntityDTO>
+        where TEntity : class
+        where TEntityDTO : IEntityDTO
     {
-        protected readonly StoreContext StoreContext;
-        protected readonly DbSet<TEntity> Entities;
+        protected readonly IMapper mapper;
+        protected readonly StoreContext storeContext;
+        protected readonly DbSet<TEntity> DbSet;
 
-        public BaseRepository(StoreContext storeContext)
+        public BaseRepository(IMapper mapper,StoreContext storeContext)
         {
-            StoreContext = storeContext;
-            Entities = storeContext.Set<TEntity>();
+            this.mapper = mapper;
+            this.storeContext = storeContext;
+            DbSet = storeContext.Set<TEntity>();
         }
 
-        public virtual void Add(TEntity entity)
+        public void Add(TEntityDTO entity)
         {
-            Entities.Add(entity);
+            var mappedEntity = mapper.Map<TEntity>(entity);
+            DbSet.Add(mappedEntity);
+            storeContext.SaveChanges();
         }
 
-        public virtual void Dispose()
+        public void Dispose()
         {
-            StoreContext.Dispose();
+            storeContext.Dispose();
             GC.SuppressFinalize(this);
         }
 
-        public virtual IQueryable<TEntity> GetAll()
+        public IQueryable<TEntityDTO> GetAll()
         {
-            return Entities;
+            return DbSet.ProjectTo<TEntityDTO>(mapper.ConfigurationProvider);
         }
 
-        public virtual TEntity GetById(int id)
-        {
-            return Entities.Find(id);
+        public TEntityDTO GetById(int id)
+        { 
+            var entity = DbSet.Find(id);
+            var mappedEntity = mapper.Map<TEntityDTO>(entity);
+            return mappedEntity;
         }
 
-        public virtual void Remove(int id)
+        public void Remove(int id)
         {
-            Entities.Remove(GetById(id));
+            var entity = DbSet.Find(id);
+            var mappedEntity = mapper.Map<TEntity>(entity);
+            DbSet.Remove(mappedEntity);
+            storeContext.SaveChanges();
         }
 
-        public virtual int SaveChanges()
+        public void Update(TEntityDTO entity)
         {
-            return StoreContext.SaveChanges();
-        }
-
-        public virtual void Update(TEntity entity)
-        {
-            Entities.Update(entity);
+            var mappedEntity = mapper.Map<TEntity>(entity);
+            storeContext.Entry(mappedEntity).State = EntityState.Modified;
+            storeContext.SaveChanges();
         }
     }
 }

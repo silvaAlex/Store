@@ -1,19 +1,23 @@
-﻿using Store.Domain.Entities;
-using Store.Domain.Interfaces.Repositories;
+﻿using AutoMapper;
+using Store.Domain.Entities;
+using Store.Domain.Interfaces;
+using Store.Infra.Cross.DTO.Models;
 using Store.Infra.Data.Context;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 
 namespace Store.Infra.Data.Repository
 {
-    public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
+    public class CategoryRepository : BaseRepository<Category, CategoryDTO>, ICategoryRepository
     {
-        public CategoryRepository(StoreContext storeContext) : base(storeContext) { }
+        public CategoryRepository(IMapper mapper, StoreContext storeContext) : base(mapper, storeContext) { }
 
-        public IEnumerable<Category> GetAllActive()
+        public IEnumerable<CategoryDTO> GetAllActive()
         {
-            var activeCategories = GetAll().Where(c => c.Active).AsNoTracking().ToList();
+            var activeCategories = GetAll()
+                .Where(c => c.Active)
+                .ToList();
+
             return activeCategories;
         }
     }

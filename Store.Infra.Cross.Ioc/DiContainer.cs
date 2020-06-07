@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Store.Domain.Interfaces.Repositories;
 using Store.Domain.Interfaces.Services;
-using Store.Domain.Services;
 using Store.Infra.Data.Context;
 using Store.Infra.Data.Repository;
+using Store.Application.Services;
+using Store.Domain.Interfaces;
 
 namespace Store.Infra.Cross.Ioc
 {
@@ -11,15 +11,17 @@ namespace Store.Infra.Cross.Ioc
     {
         public static void RegisterDependencies(IServiceCollection services)
         {
-            services.AddScoped<StoreContext>();
+            // Application
+            services.AddScoped<ICategoryAppService, CategoryAppService>();
+            services.AddScoped<IPaymentAppService, PaymentAppService>();
+            services.AddScoped<IProductAppService, ProductAppServices>();
 
+            // Infra - Data
+            services.AddScoped<StoreContext>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
 
-            services.AddScoped<ICategoryService, CategorySerivce>();
-            services.AddScoped<IPaymentService, PaymentService>();
-            services.AddScoped<IProductService, ProductService>();
         }
     }
 }

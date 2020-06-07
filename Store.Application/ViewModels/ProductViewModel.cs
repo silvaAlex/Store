@@ -29,12 +29,7 @@ namespace Store.Application.ViewModels
         [DisplayName("Categoria")]
         [Required(ErrorMessage = "Category is required.")]
         public int CategoryId { get; set; }
-
-        public CategoryViewModel Category { get; set; }
-
-        [Required]
         public DateTime CreatedAt { get; set; }
-
         public bool Active { get; set; }
     }
 }

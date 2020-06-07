@@ -10,7 +10,6 @@ namespace Store.Infra.Data.Mapping
         public void Configure(EntityTypeBuilder<Payment> builder)
         {
             builder.ToTable("Payment");
-
             builder.HasKey(c => c.Id);
 
             builder.Property(c => c.Name)

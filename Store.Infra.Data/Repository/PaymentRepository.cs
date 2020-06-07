@@ -1,19 +1,22 @@
-﻿using Store.Domain.Entities;
-using Store.Domain.Interfaces.Repositories;
+﻿using AutoMapper;
+using Store.Domain.Entities;
+using Store.Domain.Interfaces;
+using Store.Infra.Cross.DTO.Models;
 using Store.Infra.Data.Context;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 
 namespace Store.Infra.Data.Repository
 {
-    public class PaymentRepository : BaseRepository<Payment>, IPaymentRepository
+    public class PaymentRepository : BaseRepository<Payment, PaymentDTO>, IPaymentRepository
     {
-        public PaymentRepository(StoreContext storeContext) : base(storeContext) { }
-    
-        public IEnumerable<Payment> GetAllActive()
+        public PaymentRepository(IMapper mapper, StoreContext storeContext) : base(mapper, storeContext) { }
+
+        public IEnumerable<PaymentDTO> GetAllActive()
         {
-            var activePayments = GetAll().Where(c => c.Active).AsNoTracking().ToList();
+            var activePayments = GetAll()
+                .Where(x => x.Active)
+                .ToList();
             return activePayments;
         }
     }

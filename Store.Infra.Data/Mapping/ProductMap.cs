@@ -9,7 +9,6 @@ namespace Store.Infra.Data.Mapping
         public void Configure(EntityTypeBuilder<Product> builder)
         {
             builder.ToTable("Product");
-
             builder.HasKey(c => c.Id);
 
             builder.HasOne(c => c.Category)
